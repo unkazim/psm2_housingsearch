@@ -25,7 +25,6 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             
-            // Check if user is pending
             if ($user->status === 'pending') {
                 Auth::logout();
                 return back()->withErrors([
@@ -34,15 +33,19 @@ class AuthController extends Controller
             }
 
             $request->session()->regenerate();
-            
-            // Redirect based on user role
-            switch ($user->role) {
+            // dd($user);
+            // Redirect based on user_type
+            switch ($user->user_type) {
                 case 'admin':
-                    return redirect('/admin-area');
+                    return redirect()->route('admin.dashboard');
                 case 'landlord':
-                    return redirect('/landlord-area');
+                    return redirect()->route('landlord.dashboard');
+                case 'student':
+                    return redirect()->route('student.dashboard');
                 default:
-                    return redirect('/student-area');
+                    return redirect()->route('login')->withErrors([
+                        'email' => 'Invalid user type.',
+                    ]);
             }
         }
 
@@ -60,26 +63,28 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'required|string|max:20',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:student,landlord'
+            'user_type' => 'required|in:student,landlord'  // Changed from role to user_type
         ]);
 
-        // Set status based on role
-        $status = $validated['role'] === 'landlord' ? 'pending' : 'active';
+        $status = $validated['user_type'] === 'landlord' ? 'pending' : 'active';
 
         $user = User::create([
             'name' => $validated['name'],
+            'username' => $validated['username'],
             'email' => $validated['email'],
+            'phone' => $validated['phone'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
+            'user_type' => $validated['user_type'],  // Changed from role to user_type
             'status' => $status
         ]);
 
-        // Only auto-login if status is active
         if ($status === 'active') {
             Auth::login($user);
-            return redirect('/student-area')->with('success', 'Registration successful!');
+            return redirect()->route('student.dashboard')->with('success', 'Registration successful!');
         }
 
         return redirect()->route('login')
