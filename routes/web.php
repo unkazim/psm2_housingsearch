@@ -25,6 +25,18 @@ Route::middleware('auth')->group(function () {
     // Student routes
     Route::middleware('role:student')->group(function () {
         Route::get('/student-area', [StudentViewController::class, 'dashboard'])->name('student.dashboard');
+        Route::get('/properties/search', [StudentViewController::class, 'searchProperties'])->name('student.search');
+        Route::get('/properties/new-search', [StudentViewController::class, 'newSearch'])->name('student.new-search');
+        
+        // Review submission route
+        Route::post('/properties/{id}/review', [StudentViewController::class, 'submitReview'])->name('student.submit.review');
+        
+        // Move the wildcard route to the end so it doesn't catch other routes
+        Route::get('/properties/{id}', [StudentViewController::class, 'propertyDetails'])->name('student.property.details');
+        
+        // Add these routes to the student routes group
+        Route::get('/profile', [StudentViewController::class, 'showProfile'])->name('student.profile');
+        Route::post('/profile/update', [StudentViewController::class, 'updateProfile'])->name('student.profile.update');
     });
 
     // Admin routes

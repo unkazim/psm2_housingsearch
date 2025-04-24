@@ -21,11 +21,11 @@ class Landlord extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
     public function properties(): HasMany
     {
-        return $this->hasMany(Property::class, 'landlord_id');
+        return $this->hasMany(Property::class, 'landlord_id', 'landlord_id');
     }
 }

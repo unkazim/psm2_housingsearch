@@ -23,16 +23,16 @@ class Student extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
     public function rentalApplications(): HasMany
     {
-        return $this->hasMany(RentalApplication::class, 'student_id');
+        return $this->hasMany(RentalApplication::class, 'student_id', 'student_id');
     }
 
     public function reviews(): HasMany
     {
-        return $this->hasMany(Review::class, 'student_id');
+        return $this->hasMany(Review::class, 'student_id', 'student_id');
     }
 }

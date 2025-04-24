@@ -29,20 +29,66 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control @error('username') is-invalid @enderror" 
+                               id="username" name="username" value="{{ old('username') }}" required>
+                        <div class="form-text">This will be used for login.</div>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="email" class="form-label">Email Address</label>
                         <input type="email" class="form-control @error('email') is-invalid @enderror" 
                                id="email" name="email" value="{{ old('email') }}" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="role" class="form-label">Register as</label>
-                        <select class="form-select @error('role') is-invalid @enderror" 
-                                id="role" name="role" required>
-                            <option value="student">Student</option>
-                            <option value="landlord">Landlord</option>
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control @error('phone') is-invalid @enderror" 
+                               id="phone" name="phone" value="{{ old('phone') }}" 
+                               placeholder="e.g., 012-3456789" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="user_type" class="form-label">User Type</label>
+                        <select class="form-select @error('user_type') is-invalid @enderror" 
+                                id="user_type" name="user_type" required>
+                            <option value="">Select User Type</option>
+                            <option value="student" {{ old('user_type') == 'student' ? 'selected' : '' }}>Student</option>
+                            <option value="landlord" {{ old('user_type') == 'landlord' ? 'selected' : '' }}>Landlord</option>
                         </select>
-                        <div id="roleHelp" class="form-text d-none text-warning">
-                            Note: Landlord registration requires admin approval before activation.
+                    </div>
+
+                    <!-- Student-specific fields -->
+                    <div id="studentFields" class="d-none">
+                        <div class="mb-3">
+                            <label for="matric_number" class="form-label">Matric Number</label>
+                            <input type="text" class="form-control @error('matric_number') is-invalid @enderror" 
+                                   id="matric_number" name="matric_number" value="{{ old('matric_number') }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="faculty" class="form-label">Faculty</label>
+                            <select class="form-select @error('faculty') is-invalid @enderror" 
+                                    id="faculty" name="faculty">
+                                <option value="">Select Faculty</option>
+                                <option value="FSKTM">Faculty of Computing</option>
+                                <option value="FKAAB">Faculty of Civil Engineering and Built Environment</option>
+                                <option value="FKEE">Faculty of Electrical and Electronic Engineering</option>
+                                <option value="FKMP">Faculty of Mechanical and Manufacturing Engineering</option>
+                                <option value="FPTP">Faculty of Technology Management and Business</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="course" class="form-label">Course</label>
+                            <input type="text" class="form-control @error('course') is-invalid @enderror" 
+                                   id="course" name="course" value="{{ old('course') }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="semester" class="form-label">Current Semester</label>
+                            <input type="number" class="form-control @error('semester') is-invalid @enderror" 
+                                   id="semester" name="semester" value="{{ old('semester') }}" min="1" max="8">
                         </div>
                     </div>
 
@@ -73,12 +119,31 @@
 </div>
 
 <script>
-document.getElementById('role').addEventListener('change', function() {
+document.getElementById('user_type').addEventListener('change', function() {
+    const studentFields = document.getElementById('studentFields');
+    const studentInputs = studentFields.querySelectorAll('input, select');
+    
+    if (this.value === 'student') {
+        studentFields.classList.remove('d-none');
+        studentInputs.forEach(input => input.required = true);
+    } else {
+        studentFields.classList.add('d-none');
+        studentInputs.forEach(input => input.required = false);
+    }
+
     const helpText = document.getElementById('roleHelp');
     if (this.value === 'landlord') {
         helpText.classList.remove('d-none');
     } else {
         helpText.classList.add('d-none');
+    }
+});
+
+// Initialize the form based on the selected user type
+window.addEventListener('load', function() {
+    const userType = document.getElementById('user_type');
+    if (userType.value) {
+        userType.dispatchEvent(new Event('change'));
     }
 });
 </script>

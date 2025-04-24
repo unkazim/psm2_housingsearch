@@ -36,21 +36,21 @@ class Property extends Model
 
     public function landlord(): BelongsTo
     {
-        return $this->belongsTo(Landlord::class, 'landlord_id');
+        return $this->belongsTo(Landlord::class, 'landlord_id', 'landlord_id');
     }
 
     public function images(): HasMany
     {
-        return $this->hasMany(PropertyImage::class, 'property_id');
+        return $this->hasMany(PropertyImage::class, 'property_id', 'property_id');
     }
 
     public function rentalApplications(): HasMany
     {
-        return $this->hasMany(RentalApplication::class, 'property_id');
+        return $this->hasMany(RentalApplication::class, 'property_id', 'property_id');
     }
 
     public function reviews(): HasMany
     {
-        return $this->hasMany(Review::class, 'property_id');
+        return $this->hasMany(Review::class, 'property_id', 'property_id');
     }
 }

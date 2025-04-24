@@ -26,11 +26,11 @@ class Review extends Model
 
     public function property(): BelongsTo
     {
-        return $this->belongsTo(Property::class, 'property_id');
+        return $this->belongsTo(Property::class, 'property_id', 'property_id');
     }
 
     public function student(): BelongsTo
     {
-        return $this->belongsTo(Student::class, 'student_id');
+        return $this->belongsTo(Student::class, 'student_id', 'student_id');
     }
 }
