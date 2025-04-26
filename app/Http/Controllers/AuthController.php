@@ -95,20 +95,37 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        // Try to authenticate with username
+        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
             
             $user = Auth::user();
             if ($user->user_type === 'student') {
                 return redirect()->route('student.dashboard');
-            } else {
+            } elseif ($user->user_type === 'landlord') {
                 return redirect()->route('landlord.dashboard');
+            } elseif ($user->user_type === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+        }
+        
+        // If username login failed, try with email
+        if (Auth::attempt(['email' => $credentials['username'], 'password' => $credentials['password']])) {
+            $request->session()->regenerate();
+            
+            $user = Auth::user();
+            if ($user->user_type === 'student') {
+                return redirect()->route('student.dashboard');
+            } elseif ($user->user_type === 'landlord') {
+                return redirect()->route('landlord.dashboard');
+            } elseif ($user->user_type === 'admin') {
+                return redirect()->route('admin.dashboard');
             }
         }
 
         return back()->withErrors([
             'username' => 'The provided credentials do not match our records.',
-        ]);
+        ])->withInput($request->except('password'));
     }
 
     public function logout(Request $request)

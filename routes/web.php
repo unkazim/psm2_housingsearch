@@ -47,5 +47,21 @@ Route::middleware('auth')->group(function () {
     // Landlord routes
     Route::middleware('role:landlord')->group(function () {
         Route::get('/landlord-area', [LandlordViewController::class, 'dashboard'])->name('landlord.dashboard');
+        
+        // Property management
+        Route::get('/landlord/properties', [LandlordViewController::class, 'properties'])->name('landlord.properties');
+        Route::get('/landlord/properties/create', [LandlordViewController::class, 'createProperty'])->name('landlord.properties.create');
+        Route::post('/landlord/properties', [LandlordViewController::class, 'storeProperty'])->name('landlord.properties.store');
+        Route::get('/landlord/properties/{id}/edit', [LandlordViewController::class, 'editProperty'])->name('landlord.properties.edit');
+        Route::put('/landlord/properties/{id}', [LandlordViewController::class, 'updateProperty'])->name('landlord.properties.update');
+        Route::delete('/landlord/properties/{id}', [LandlordViewController::class, 'deleteProperty'])->name('landlord.properties.delete');
+        
+        // Rental applications
+        Route::get('/landlord/applications', [LandlordViewController::class, 'applications'])->name('landlord.applications');
+        Route::put('/landlord/applications/{id}', [LandlordViewController::class, 'updateApplicationStatus'])->name('landlord.applications.update');
+        
+        // Profile
+        Route::get('/landlord/profile', [LandlordViewController::class, 'profile'])->name('landlord.profile');
+        Route::post('/landlord/profile/update', [LandlordViewController::class, 'updateProfile'])->name('landlord.profile.update');
     });
 });

@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
             ]);
 
             $landlord = Landlord::create([
-                'user_id' => $user->id,
+                'user_id' => $user->user_id, // Changed from $user->id
                 'bank_account' => "1234567890{$i}",
                 'ic_number' => "900101{$i}5678"
             ]);
@@ -86,7 +86,7 @@ class UserSeeder extends Seeder
             ]);
 
             $student = Student::create([
-                'user_id' => $user->id,
+                'user_id' => $user->user_id, // Changed from $user->id
                 'matric_number' => "A{$i}0123456",
                 'faculty' => "Faculty of Engineering {$i}",
                 'course' => "Bachelor of Engineering {$i}",

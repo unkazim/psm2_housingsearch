@@ -17,7 +17,8 @@ class RentalApplication extends Model
         'student_id',
         'application_date',
         'status',
-        'message'
+        'message',
+        'landlord_message'
     ];
 
     protected $casts = [
