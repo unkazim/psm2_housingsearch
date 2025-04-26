@@ -217,6 +217,66 @@
     </div>
 </div>
 
+<!-- Add this after your featured properties section -->
+<div class="container mt-5">
+    <h2 class="mb-4">My Rental Applications</h2>
+    
+    @if($rentalApplications->isEmpty())
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            You haven't submitted any rental applications yet.
+        </div>
+    @else
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Property</th>
+                        <th>Landlord</th>
+                        <th>Application Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($rentalApplications as $application)
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    @if($application->property->images->isNotEmpty())
+                                        <img src="{{ asset($application->property->images->first()->image_url) }}" 
+                                             alt="Property" class="me-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                                    @endif
+                                    <div>
+                                        <strong>{{ $application->property->title }}</strong>
+                                        <div class="small text-muted">{{ $application->property->address }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ $application->property->landlord->user->name }}</td>
+                            <td>{{ $application->application_date->format('d M Y') }}</td>
+                            <td>
+                                @if($application->status == 'pending')
+                                    <span class="badge bg-warning">Pending</span>
+                                @elseif($application->status == 'approved')
+                                    <span class="badge bg-success">Approved</span>
+                                @else
+                                    <span class="badge bg-danger">Rejected</span>
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('student.property.details', $application->property->property_id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i> View Property
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+</div>
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 @endpush

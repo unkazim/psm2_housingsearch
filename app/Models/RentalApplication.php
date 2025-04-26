@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RentalApplication extends Model
 {
-    use HasFactory;
-
     protected $primaryKey = 'application_id';
+    public $timestamps = false;
 
     protected $fillable = [
         'property_id',
@@ -21,16 +18,19 @@ class RentalApplication extends Model
         'landlord_message'
     ];
 
+    // Cast dates to Carbon instances
     protected $casts = [
-        'application_date' => 'date'
+        'application_date' => 'datetime'
     ];
 
-    public function property(): BelongsTo
+    // Relationship with Property
+    public function property()
     {
         return $this->belongsTo(Property::class, 'property_id', 'property_id');
     }
 
-    public function student(): BelongsTo
+    // Relationship with Student
+    public function student()
     {
         return $this->belongsTo(Student::class, 'student_id', 'student_id');
     }

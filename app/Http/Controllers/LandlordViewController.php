@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Landlord;
 use App\Models\Property;
 use App\Models\PropertyImage;
-use App\Models\RentalApplication;
+use App\Models\RentalApplication; // Add this line
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -239,41 +239,25 @@ class LandlordViewController extends Controller
     
     public function updateApplicationStatus(Request $request, $id)
     {
-        $validated = $request->validate([
-            'status' => 'required|in:approved,rejected',
-            'message' => 'nullable|string',
-        ]);
+        $application = RentalApplication::findOrFail($id);
+        $property = Property::findOrFail($application->property_id);
         
-        $landlord = Auth::user()->landlord;
-        $application = RentalApplication::with('property')
-            ->findOrFail($id);
-            
-        // Verify the property belongs to this landlord
-        if ($application->property->landlord_id != $landlord->landlord_id) {
-            return redirect()->route('landlord.applications')
-                ->with('error', 'You do not have permission to update this application.');
-        }
-        
-        $application->update([
-            'status' => $validated['status'],
-            'landlord_message' => $validated['message'] ?? null,
-        ]);
-        
-        // If approved, update property status to rented
-        if ($validated['status'] == 'approved') {
-            $application->property->update(['status' => 'rented']);
+        if ($request->status === 'approved') {
+            // Mark the property as rented
+            $property->update(['status' => 'rented']);
             
             // Reject all other pending applications for this property
-            RentalApplication::where('property_id', $application->property_id)
+            RentalApplication::where('property_id', $property->property_id)
                 ->where('application_id', '!=', $id)
                 ->where('status', 'pending')
-                ->update([
-                    'status' => 'rejected',
-                    'landlord_message' => 'Property has been rented to another applicant.'
-                ]);
+                ->update(['status' => 'rejected']);
         }
         
-        return redirect()->route('landlord.applications')
-            ->with('success', 'Application status updated successfully!');
+        // Update the application status
+        $application->update([
+            'status' => $request->status
+        ]);
+        
+        return redirect()->back()->with('success', 'Application ' . ucfirst($request->status));
     }
 }

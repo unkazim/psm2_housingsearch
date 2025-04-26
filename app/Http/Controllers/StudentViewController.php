@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Property;
 use App\Models\Review;
 use App\Models\Student;
+use App\Models\RentalApplication; // Add this line
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -25,7 +26,14 @@ class StudentViewController extends Controller
             ->take(3)
             ->get();
             
-        return view('student.dashboard', compact('featuredProperties'));
+        // Get student's rental applications
+        $student = Auth::user()->student;
+        $rentalApplications = RentalApplication::with(['property', 'property.landlord.user'])
+            ->where('student_id', $student->student_id)
+            ->orderBy('application_date', 'desc')
+            ->get();
+            
+        return view('student.dashboard', compact('featuredProperties', 'rentalApplications'));
     }
 
     public function searchProperties(Request $request)
@@ -209,5 +217,38 @@ class StudentViewController extends Controller
             return redirect()->route('student.profile')
                              ->with('success', 'Profile updated successfully!');
         }
+    }
+
+    public function applyForRental(Request $request, $propertyId)
+    {
+        $property = Property::findOrFail($propertyId);
+        
+        // Check if property is available
+        if ($property->status !== 'available') {
+            return back()->with('error', 'Sorry, this property is no longer available.');
+        }
+        
+        // Check if student has already applied
+        $existingApplication = RentalApplication::where('property_id', $propertyId)
+            ->where('student_id', Auth::user()->student->student_id)
+            ->where('status', 'pending')
+            ->first();
+        
+        if ($existingApplication) {
+            return back()->with('error', 'You have already applied for this property.');
+        }
+        
+        // Create new application
+        $application = new RentalApplication([
+            'property_id' => $propertyId,
+            'student_id' => Auth::user()->student->student_id,
+            'application_date' => now(),
+            'status' => 'pending',
+            'message' => $request->message
+        ]);
+        
+        $application->save();
+        
+        return back()->with('success', 'Your rental application has been submitted successfully!');
     }
 }

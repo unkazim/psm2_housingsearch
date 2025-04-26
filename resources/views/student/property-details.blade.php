@@ -290,6 +290,49 @@
                     </a>
                 </div>
                 
+                <!-- Add this after your property details section -->
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Apply for Rental</h5>
+                    </div>
+                    <div class="card-body">
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissible fade show">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+                        
+                        @if(session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show">
+                                {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+                
+                        @if($property->status === 'available')
+                            <form action="{{ route('student.apply.rental', $property->property_id) }}" method="POST">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Message to Landlord (Optional)</label>
+                                    <textarea class="form-control" id="message" name="message" rows="4" 
+                                              placeholder="Introduce yourself and explain why you're interested in this property..."></textarea>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Submit Application
+                                    </button>
+                                </div>
+                            </form>
+                        @else
+                            <div class="alert alert-warning mb-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                This property is currently not available for rental applications.
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            
                 <a href="#" class="btn btn-primary w-100">Apply for Rental</a>
             </div>
             

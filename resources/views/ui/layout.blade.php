@@ -6,6 +6,86 @@
     <title>@yield('title') - UTHM Student Housing</title>
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Add this in the head section, after your existing CSS links -->
+    <style>
+        /* Property Application Styles */
+        .card {
+            border: none;
+            border-radius: 10px;
+        }
+        
+        .card-header {
+            border-radius: 10px 10px 0 0;
+            background: linear-gradient(45deg, #4e73df, #224abe);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #4e73df, #224abe);
+            border: none;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 115, 223, 0.3);
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .form-control:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+        }
+    
+        /* Property Details Styles */
+        .property-details {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+    
+        .property-feature {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 50px;
+            margin: 5px;
+        }
+    
+        .property-feature i {
+            margin-right: 8px;
+            color: #4e73df;
+        }
+    
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+    
+        .modal-header {
+            background: linear-gradient(45deg, #4e73df, #224abe);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+    
+        .modal-footer {
+            border-top: none;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation Bar -->

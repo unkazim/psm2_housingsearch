@@ -23,6 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
     // Student routes
+    // Inside the student routes middleware group
     Route::middleware('role:student')->group(function () {
         Route::get('/student-area', [StudentViewController::class, 'dashboard'])->name('student.dashboard');
         Route::get('/properties/search', [StudentViewController::class, 'searchProperties'])->name('student.search');
@@ -37,6 +38,9 @@ Route::middleware('auth')->group(function () {
         // Add these routes to the student routes group
         Route::get('/profile', [StudentViewController::class, 'showProfile'])->name('student.profile');
         Route::post('/profile/update', [StudentViewController::class, 'updateProfile'])->name('student.profile.update');
+        
+        // Add this new route for rental applications
+        Route::post('/properties/{id}/apply', [StudentViewController::class, 'applyForRental'])->name('student.apply.rental');
     });
 
     // Admin routes
@@ -58,7 +62,8 @@ Route::middleware('auth')->group(function () {
         
         // Rental applications
         Route::get('/landlord/applications', [LandlordViewController::class, 'applications'])->name('landlord.applications');
-        Route::put('/landlord/applications/{id}', [LandlordViewController::class, 'updateApplicationStatus'])->name('landlord.applications.update');
+        Route::put('/landlord/applications/{id}/update-status', [LandlordViewController::class, 'updateApplicationStatus'])
+            ->name('landlord.applications.updateStatus');
         
         // Profile
         Route::get('/landlord/profile', [LandlordViewController::class, 'profile'])->name('landlord.profile');

@@ -96,7 +96,8 @@
                 <div class="modal fade" id="approveModal-{{ $application->application_id }}" tabindex="-1" aria-labelledby="approveModalLabel-{{ $application->application_id }}" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <form action="{{ route('landlord.applications.update', $application->application_id) }}" method="POST">
+                            <!-- Approve Modal form action -->
+                            <form action="{{ route('landlord.applications.updateStatus', $application->application_id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="status" value="approved">
@@ -108,11 +109,6 @@
                                 <div class="modal-body">
                                     <p>Are you sure you want to approve this application from <strong>{{ $application->student->user->name }}</strong> for <strong>{{ $application->property->title }}</strong>?</p>
                                     <p class="text-warning"><strong>Note:</strong> Approving this application will mark the property as rented and reject all other pending applications for this property.</p>
-                                    
-                                    <div class="mb-3">
-                                        <label for="message-{{ $application->application_id }}" class="form-label">Message to Student (optional):</label>
-                                        <textarea class="form-control" id="message-{{ $application->application_id }}" name="message" rows="3" placeholder="Provide any additional information or instructions..."></textarea>
-                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -127,7 +123,8 @@
                 <div class="modal fade" id="rejectModal-{{ $application->application_id }}" tabindex="-1" aria-labelledby="rejectModalLabel-{{ $application->application_id }}" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <form action="{{ route('landlord.applications.update', $application->application_id) }}" method="POST">
+                            <!-- Reject Modal form action -->
+                            <form action="{{ route('landlord.applications.updateStatus', $application->application_id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="status" value="rejected">
@@ -138,11 +135,6 @@
                                 </div>
                                 <div class="modal-body">
                                     <p>Are you sure you want to reject this application from <strong>{{ $application->student->user->name }}</strong> for <strong>{{ $application->property->title }}</strong>?</p>
-                                    
-                                    <div class="mb-3">
-                                        <label for="message-{{ $application->application_id }}" class="form-label">Reason for Rejection (optional):</label>
-                                        <textarea class="form-control" id="message-{{ $application->application_id }}" name="message" rows="3" placeholder="Provide a reason for rejection..."></textarea>
-                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
