@@ -88,14 +88,15 @@ class LandlordViewController extends Controller
             'property_type' => $validated['property_type'],
         ]);
         
+        // In the storeProperty method
         if ($request->hasFile('images')) {
             $displayOrder = 1;
             foreach ($request->file('images') as $image) {
                 $filename = 'property_' . $property->property_id . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-                $path = $image->storeAs('public/property_images', $filename);
                 
-                // Make sure the image_url is correctly formatted for web access
-                $publicPath = 'storage/property_images/' . $filename;
+                // Store directly in public path instead of storage
+                $image->move(public_path('property_images'), $filename);
+                $publicPath = 'property_images/' . $filename;
                 
                 PropertyImage::create([
                     'property_id' => $property->property_id,
@@ -157,10 +158,10 @@ class LandlordViewController extends Controller
             
             foreach ($request->file('images') as $image) {
                 $filename = 'property_' . $property->property_id . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-                $path = $image->storeAs('public/property_images', $filename);
                 
-                // Make sure the image_url is correctly formatted for web access
-                $publicPath = 'storage/property_images/' . $filename;
+                // Store directly in public path instead of storage
+                $image->move(public_path('property_images'), $filename);
+                $publicPath = 'property_images/' . $filename;
                 
                 PropertyImage::create([
                     'property_id' => $property->property_id,
@@ -178,9 +179,10 @@ class LandlordViewController extends Controller
                     ->first();
                     
                 if ($image) {
-                    // Remove the file from storage
-                    $path = str_replace('storage/', 'public/', $image->image_url);
-                    Storage::delete($path);
+                    // Delete file from public directory
+                    if (file_exists(public_path($image->image_url))) {
+                        unlink(public_path($image->image_url));
+                    }
                     
                     // Delete the database record
                     $image->delete();
@@ -207,14 +209,16 @@ class LandlordViewController extends Controller
                 ->with('error', 'Cannot delete property with active rental applications.');
         }
         
+        // In the deleteProperty method, update the image deletion logic
         // Delete all images
         foreach ($property->images as $image) {
-            // Remove the file from storage
-            $path = str_replace('storage/', 'public/', $image->image_url);
-            Storage::delete($path);
-            
-            // Delete the database record
-            $image->delete();
+        // Delete file from public directory
+        if (file_exists(public_path($image->image_url))) {
+            unlink(public_path($image->image_url));
+        }
+        
+        // Delete the database record
+        $image->delete();
         }
         
         // Delete the property

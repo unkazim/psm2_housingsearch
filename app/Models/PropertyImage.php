@@ -18,6 +18,8 @@ class PropertyImage extends Model
         'display_order'
     ];
 
+    // Remove the accessor that was modifying paths
+
     public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class, 'property_id', 'property_id');
