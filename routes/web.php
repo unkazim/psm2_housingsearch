@@ -7,23 +7,21 @@ use App\Http\Controllers\AdminViewController;
 use Illuminate\Support\Facades\Route;
 
 // Guest routes
-    Route::get('/', function () {
-        return redirect()->route('login');
-    });
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
-    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
-
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
     // Student routes
-    // Inside the student routes middleware group
     Route::middleware('role:student')->group(function () {
         Route::get('/student-area', [StudentViewController::class, 'dashboard'])->name('student.dashboard');
         Route::get('/properties/search', [StudentViewController::class, 'searchProperties'])->name('student.search');
@@ -41,11 +39,6 @@ Route::middleware('auth')->group(function () {
         
         // Add this new route for rental applications
         Route::post('/properties/{id}/apply', [StudentViewController::class, 'applyForRental'])->name('student.apply.rental');
-    });
-
-    // Admin routes
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/admin-area', [AdminViewController::class, 'dashboard'])->name('admin.dashboard');
     });
 
     // Landlord routes
@@ -68,5 +61,15 @@ Route::middleware('auth')->group(function () {
         // Profile
         Route::get('/landlord/profile', [LandlordViewController::class, 'profile'])->name('landlord.profile');
         Route::post('/landlord/profile/update', [LandlordViewController::class, 'updateProfile'])->name('landlord.profile.update');
+    });
+    
+    // Admin routes
+    Route::middleware('role:admin')->prefix('admin-area')->group(function () {
+        Route::get('/', [AdminViewController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/pending-landlords', [AdminViewController::class, 'pendingLandlords'])->name('admin.pending-landlords');
+        Route::post('/landlords/{id}/approve', [AdminViewController::class, 'approveLandlord'])->name('admin.landlords.approve');
+        Route::post('/landlords/{id}/reject', [AdminViewController::class, 'rejectLandlord'])->name('admin.landlords.reject');
+        Route::get('/landlords', [AdminViewController::class, 'allLandlords'])->name('admin.landlords');
+        Route::get('/students', [AdminViewController::class, 'allStudents'])->name('admin.students');
     });
 });

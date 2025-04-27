@@ -98,15 +98,15 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     @auth
-                        @if(auth()->user()->role === 'student')
+                        @if(auth()->user()->user_type === 'student')
                             <li class="nav-item">
                                 <a class="nav-link" href="/student-area">Student Area</a>
                             </li>
-                        @elseif(auth()->user()->role === 'landlord')
+                        @elseif(auth()->user()->user_type === 'landlord')
                             <li class="nav-item">
                                 <a class="nav-link" href="/landlord-area">Landlord Area</a>
                             </li>
-                        @elseif(auth()->user()->role === 'admin')
+                        @elseif(auth()->user()->user_type === 'admin')
                             <li class="nav-item">
                                 <a class="nav-link" href="/admin-area">Admin Area</a>
                             </li>

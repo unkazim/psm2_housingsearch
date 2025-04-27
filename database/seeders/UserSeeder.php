@@ -40,9 +40,10 @@ class UserSeeder extends Seeder
             ]);
 
             $landlord = Landlord::create([
-                'user_id' => $user->user_id, // Changed from $user->id
+                'user_id' => $user->user_id,
                 'bank_account' => "1234567890{$i}",
-                'ic_number' => "900101{$i}5678"
+                'ic_number' => "900101{$i}5678",
+                'approval_status' => 'approved' // Add this line to set initial status
             ]);
 
             // Create 2 properties for each landlord

@@ -19,7 +19,7 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
-        'user_type',
+        'user_type', // This is defined as user_type
         'status'
     ];
 
@@ -45,6 +45,6 @@ class User extends Authenticatable
 
     public function hasRole($role)
     {
-        return $this->user_type === $role;
+        return $this->user_type === $role; // Correctly using user_type here
     }
 }

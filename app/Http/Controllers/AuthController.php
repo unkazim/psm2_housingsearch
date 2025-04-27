@@ -18,69 +18,61 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // Common validation rules
-        $rules = [
+        // Validate the request
+        $request->validate([
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string|max:15',
+            'phone' => 'required|string|max:20',
             'password' => 'required|string|min:8|confirmed',
             'user_type' => 'required|in:student,landlord',
-        ];
+        ]);
 
-        // Add student-specific validation rules
+        // Create the user
+        $user = User::create([
+            'name' => $request->name,
+            'username' => $request->username,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'password' => Hash::make($request->password),
+            'user_type' => $request->user_type, // Changed from 'role' to 'user_type'
+        ]);
+
+        // Create the role-specific record
         if ($request->user_type === 'student') {
-            $rules = array_merge($rules, [
+            // Validate student-specific fields
+            $request->validate([
                 'matric_number' => 'required|string|max:20|unique:students',
                 'faculty' => 'required|string|max:255',
                 'course' => 'required|string|max:255',
                 'semester' => 'required|integer|min:1|max:8',
             ]);
-        }
 
-        // Validate the request
-        $validated = $request->validate($rules);
-
-        // Create user
-        $user = User::create([
-            'name' => $validated['name'],
-            'username' => $validated['username'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'password' => Hash::make($validated['password']),
-            'user_type' => $validated['user_type'],
-            'status' => 'active'
-        ]);
-
-        // Create role-specific record
-        if ($validated['user_type'] === 'student') {
+            // Create student record
             Student::create([
                 'user_id' => $user->user_id,
-                'matric_number' => $validated['matric_number'],
-                'faculty' => $validated['faculty'],
-                'course' => $validated['course'],
-                'semester' => $validated['semester']
+                'matric_number' => $request->matric_number,
+                'faculty' => $request->faculty,
+                'course' => $request->course,
+                'semester' => $request->semester,
             ]);
-        } else {
-            // Create landlord record
+        } else if ($request->user_type === 'landlord') {
+            // Validate landlord-specific fields
+            $request->validate([
+                'bank_account' => 'required|string|max:255',
+            ]);
+
+            // Create landlord record with pending approval status
             Landlord::create([
                 'user_id' => $user->user_id,
-                'bank_account' => null, // These can be updated later in profile
-                'ic_number' => null
+                'bank_account' => $request->bank_account,
+                'approval_status' => 'pending', // Set initial status as pending
             ]);
         }
 
-        // Log the user in
-        Auth::login($user);
-
-        // Redirect based on user type
-        if ($user->user_type === 'student') {
-            return redirect()->route('student.dashboard')
-                ->with('success', 'Registration successful! Welcome to your student dashboard.');
-        } else {
-            return redirect()->route('landlord.dashboard')
-                ->with('success', 'Registration successful! Welcome to your landlord dashboard.');
-        }
+        // Redirect to login with success message
+        return redirect()->route('login')->with('status', 'Registration successful! ' 
+            ($request->user_type === 'landlord' ? 'Your account is pending approval by an administrator.' : 'You can now log in.'));
     }
 
     public function showLogin()
@@ -95,37 +87,42 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Try to authenticate with username
-        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
-            $request->session()->regenerate();
-            
-            $user = Auth::user();
-            if ($user->user_type === 'student') {
-                return redirect()->route('student.dashboard');
-            } elseif ($user->user_type === 'landlord') {
-                return redirect()->route('landlord.dashboard');
-            } elseif ($user->user_type === 'admin') {
-                return redirect()->route('admin.dashboard');
-            }
-        }
+        // Determine if username is email or username
+        $loginType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         
-        // If username login failed, try with email
-        if (Auth::attempt(['email' => $credentials['username'], 'password' => $credentials['password']])) {
+        // Attempt to authenticate
+        if (Auth::attempt([$loginType => $request->username, 'password' => $request->password], $request->remember)) {
+            $user = Auth::user();
+            
+            // Check if user is a landlord and if they're approved
+            if ($user->user_type === 'landlord') { // Changed from 'role' to 'user_type'
+                $landlord = Landlord::where('user_id', $user->user_id)->first();
+                
+                if ($landlord && $landlord->approval_status !== 'approved') {
+                    Auth::logout();
+                    return back()->withErrors([
+                        'username' => 'Your landlord account is pending approval by an administrator.',
+                    ]);
+                }
+            }
+            
             $request->session()->regenerate();
             
-            $user = Auth::user();
-            if ($user->user_type === 'student') {
+            // Redirect based on role
+            if ($user->user_type === 'student') { // Changed from 'role' to 'user_type'
                 return redirect()->route('student.dashboard');
-            } elseif ($user->user_type === 'landlord') {
+            } else if ($user->user_type === 'landlord') { // Changed from 'role' to 'user_type'
                 return redirect()->route('landlord.dashboard');
-            } elseif ($user->user_type === 'admin') {
+            } else if ($user->user_type === 'admin') { // Changed from 'role' to 'user_type'
                 return redirect()->route('admin.dashboard');
             }
+            
+            return redirect()->intended('/');
         }
 
         return back()->withErrors([
             'username' => 'The provided credentials do not match our records.',
-        ])->withInput($request->except('password'));
+        ]);
     }
 
     public function logout(Request $request)

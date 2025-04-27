@@ -14,6 +14,7 @@
         border-radius: 8px;
         overflow: hidden;
         height: 400px;
+        position: relative;
     }
     
     .property-image img {
@@ -122,18 +123,30 @@
     <div class="row">
         <div class="col-lg-8">
             <!-- Property Images -->
-            <div class="property-image mb-4">
+            <div class="property-image mb-4 position-relative">
                 <img id="mainImage" src="{{ $property->images->first() ? asset($property->images->first()->image_url) : asset('images/placeholder.jpg') }}" 
                      alt="{{ $property->title }}">
+                
+                @if($property->images->count() > 1)
+                    <button class="carousel-control-prev" type="button" onclick="navigateImage(-1)">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" onclick="navigateImage(1)">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                @endif
             </div>
             
             @if($property->images->count() > 1)
                 <div class="property-thumbnails d-flex gap-2 mb-4 overflow-auto">
-                    @foreach($property->images as $image)
+                    @foreach($property->images as $index => $image)
                         <img src="{{ asset($image->image_url) }}" 
                              class="property-thumbnail {{ $loop->first ? 'active' : '' }}"
                              alt="Property Image {{ $loop->iteration }}"
-                             onclick="changeMainImage('{{ asset($image->image_url) }}', this)">
+                             data-index="{{ $index }}"
+                             onclick="changeMainImage('{{ asset($image->image_url) }}', this, {{ $index }})">
                     @endforeach
                 </div>
             @endif
@@ -333,7 +346,7 @@
                     </div>
                 </div>
             
-                <a href="#" class="btn btn-primary w-100">Apply for Rental</a>
+                <!-- <a href="#" class="btn btn-primary w-100">Apply for Rental</a> -->
             </div>
             
             <!-- Property Status -->
@@ -397,8 +410,19 @@
 
 @push('scripts')
 <script>
-    function changeMainImage(src, thumbnail) {
+    let currentImageIndex = 0;
+    const images = [
+        @foreach($property->images as $index => $image)
+            {
+                src: "{{ asset($image->image_url) }}",
+                index: {{ $index }}
+            }{{ !$loop->last ? ',' : '' }}
+        @endforeach
+    ];
+    
+    function changeMainImage(src, thumbnail, index) {
         document.getElementById('mainImage').src = src;
+        currentImageIndex = index;
         
         // Remove active class from all thumbnails
         document.querySelectorAll('.property-thumbnail').forEach(thumb => {
@@ -408,6 +432,43 @@
         // Add active class to clicked thumbnail
         thumbnail.classList.add('active');
     }
+    
+    function navigateImage(direction) {
+        let newIndex = currentImageIndex + direction;
+        
+        // Handle wrapping around
+        if (newIndex < 0) {
+            newIndex = images.length - 1;
+        } else if (newIndex >= images.length) {
+            newIndex = 0;
+        }
+        
+        // Update the main image
+        document.getElementById('mainImage').src = images[newIndex].src;
+        currentImageIndex = newIndex;
+        
+        // Update the active thumbnail
+        document.querySelectorAll('.property-thumbnail').forEach(thumb => {
+            thumb.classList.remove('active');
+        });
+        
+        const activeThumbnail = document.querySelector(`.property-thumbnail[data-index="${newIndex}"]`);
+        if (activeThumbnail) {
+            activeThumbnail.classList.add('active');
+            
+            // Scroll the thumbnail into view if needed
+            activeThumbnail.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }
+    
+    // Add keyboard navigation
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'ArrowLeft') {
+            navigateImage(-1);
+        } else if (event.key === 'ArrowRight') {
+            navigateImage(1);
+        }
+    });
 </script>
 @endpush
 @endsection
