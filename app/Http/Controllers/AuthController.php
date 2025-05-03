@@ -59,19 +59,22 @@ class AuthController extends Controller
         } else if ($request->user_type === 'landlord') {
             // Validate landlord-specific fields
             $request->validate([
+                'ic_number' => 'required|string|max:20',
                 'bank_account' => 'required|string|max:255',
             ]);
 
             // Create landlord record with pending approval status
             Landlord::create([
                 'user_id' => $user->user_id,
+                'ic_number' => $request->ic_number,
                 'bank_account' => $request->bank_account,
                 'approval_status' => 'pending', // Set initial status as pending
             ]);
         }
 
         // Redirect to login with success message
-        return redirect()->route('login')->with('status', 'Registration successful! ' 
+        return redirect()->route('login')->with('status', 'Registration successful! ' .
+            ($request->user_type === 'landlord' ? 'Your account is pending approval by an administrator.' : 'You can now log in.') .
             ($request->user_type === 'landlord' ? 'Your account is pending approval by an administrator.' : 'You can now log in.'));
     }
 

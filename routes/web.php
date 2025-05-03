@@ -64,12 +64,22 @@ Route::middleware('auth')->group(function () {
     });
     
     // Admin routes
-    Route::middleware('role:admin')->prefix('admin-area')->group(function () {
-        Route::get('/', [AdminViewController::class, 'dashboard'])->name('admin.dashboard');
-        Route::get('/pending-landlords', [AdminViewController::class, 'pendingLandlords'])->name('admin.pending-landlords');
-        Route::post('/landlords/{id}/approve', [AdminViewController::class, 'approveLandlord'])->name('admin.landlords.approve');
-        Route::post('/landlords/{id}/reject', [AdminViewController::class, 'rejectLandlord'])->name('admin.landlords.reject');
-        Route::get('/landlords', [AdminViewController::class, 'allLandlords'])->name('admin.landlords');
-        Route::get('/students', [AdminViewController::class, 'allStudents'])->name('admin.students');
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/admin-area', [AdminViewController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/admin/pending-landlords', [AdminViewController::class, 'pendingLandlords'])->name('admin.pending-landlords');
+        Route::post('/admin/landlords/{id}/approve', [AdminViewController::class, 'approveLandlord'])->name('admin.landlords.approve');
+        Route::post('/admin/landlords/{id}/reject', [AdminViewController::class, 'rejectLandlord'])->name('admin.landlords.reject');
+        Route::get('/admin/landlords', [AdminViewController::class, 'allLandlords'])->name('admin.landlords');
+        Route::get('/admin/students', [AdminViewController::class, 'allStudents'])->name('admin.students');
+        
+        // Add these new routes for deleting accounts
+        Route::delete('/admin/students/{id}/delete', [AdminViewController::class, 'deleteStudent'])->name('admin.students.delete');
+        Route::delete('/admin/landlords/{id}/delete', [AdminViewController::class, 'deleteLandlord'])->name('admin.landlords.delete');
+        
+        // Add these new routes for property management
+        Route::get('/admin/properties', [AdminViewController::class, 'allProperties'])->name('admin.properties');
+        Route::get('/admin/properties/{id}', [AdminViewController::class, 'propertyDetails'])->name('admin.property.details');
+        Route::delete('/admin/properties/{id}/delete', [AdminViewController::class, 'deleteProperty'])->name('admin.property.delete');
+        Route::delete('/admin/reviews/{id}/delete', [AdminViewController::class, 'deleteReview'])->name('admin.review.delete');
     });
 });

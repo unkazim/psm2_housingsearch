@@ -64,7 +64,7 @@
                     <p class="card-text display-4">{{ $propertyCount }}</p>
                 </div>
                 <div class="card-footer bg-transparent border-0">
-                    <a class="text-white text-decoration-none stretched-link" href="#">
+                    <a class="text-white text-decoration-none stretched-link" href="{{ route('admin.properties') }}">
                         View Details <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>

@@ -56,6 +56,9 @@
                             <option value="student" {{ old('user_type') == 'student' ? 'selected' : '' }}>Student</option>
                             <option value="landlord" {{ old('user_type') == 'landlord' ? 'selected' : '' }}>Landlord</option>
                         </select>
+                        <div id="roleHelp" class="form-text d-none">
+                            Note: Landlord accounts require approval before they can be used.
+                        </div>
                     </div>
 
                     <!-- Student-specific fields -->
@@ -92,6 +95,24 @@
                         </div>
                     </div>
 
+                    <!-- Landlord-specific fields -->
+                    <div id="landlordFields" class="d-none">
+                        <div class="mb-3">
+                            <label for="ic_number" class="form-label">IC Number</label>
+                            <input type="text" class="form-control @error('ic_number') is-invalid @enderror" 
+                                   id="ic_number" name="ic_number" value="{{ old('ic_number') }}"
+                                   placeholder="e.g., 990101-01-1234" required>
+                            <div class="form-text">Your identification card number.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bank_account" class="form-label">Bank Account</label>
+                            <input type="text" class="form-control @error('bank_account') is-invalid @enderror" 
+                                   id="bank_account" name="bank_account" value="{{ old('bank_account') }}"
+                                   placeholder="e.g., Bank Name - Account Number">
+                            <div class="form-text">This will be used for rental payments.</div>
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control @error('password') is-invalid @enderror" 
@@ -121,14 +142,25 @@
 <script>
 document.getElementById('user_type').addEventListener('change', function() {
     const studentFields = document.getElementById('studentFields');
+    const landlordFields = document.getElementById('landlordFields');
     const studentInputs = studentFields.querySelectorAll('input, select');
+    const landlordInputs = landlordFields.querySelectorAll('input');
     
     if (this.value === 'student') {
         studentFields.classList.remove('d-none');
+        landlordFields.classList.add('d-none');
         studentInputs.forEach(input => input.required = true);
+        landlordInputs.forEach(input => input.required = false);
+    } else if (this.value === 'landlord') {
+        studentFields.classList.add('d-none');
+        landlordFields.classList.remove('d-none');
+        studentInputs.forEach(input => input.required = false);
+        landlordInputs.forEach(input => input.required = true);
     } else {
         studentFields.classList.add('d-none');
+        landlordFields.classList.add('d-none');
         studentInputs.forEach(input => input.required = false);
+        landlordInputs.forEach(input => input.required = false);
     }
 
     const helpText = document.getElementById('roleHelp');

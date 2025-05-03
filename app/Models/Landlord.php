@@ -16,6 +16,7 @@ class Landlord extends Model
     protected $fillable = [
         'user_id',
         'bank_account',
+        'ic_number',
         'approval_status', // Add this field
     ];
 

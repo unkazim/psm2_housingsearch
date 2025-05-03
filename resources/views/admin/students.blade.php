@@ -39,6 +39,7 @@
                                 <th>Course</th>
                                 <th>Semester</th>
                                 <th>Registration Date</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,6 +53,15 @@
                                     <td>{{ $student->course }}</td>
                                     <td>{{ $student->semester }}</td>
                                     <td>{{ $student->created_at->format('d M Y') }}</td>
+                                    <td>
+                                        <form action="{{ route('admin.students.delete', $student->student_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this student account? This action cannot be undone.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -64,13 +74,5 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-@endpush
-
-@push('scripts')
-<script>
-    $(document).ready(function() {
-        $('#studentsTable').DataTable();
-    });
-</script>
 @endpush
 @endsection

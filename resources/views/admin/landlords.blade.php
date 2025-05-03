@@ -78,11 +78,21 @@
                                                         <form action="{{ route('admin.landlords.reject', $landlord->landlord_id) }}" method="POST">
                                                             @csrf
                                                             <button type="submit" class="dropdown-item">
-                                                                <i class="fas fa-times text-danger"></i> Reject
+                                                                <i class="fas fa-times text-warning"></i> Reject
                                                             </button>
                                                         </form>
                                                     </li>
                                                 @endif
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <form action="{{ route('admin.landlords.delete', $landlord->landlord_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this landlord account? This action cannot be undone.');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="fas fa-trash text-danger"></i> Delete Account
+                                                        </button>
+                                                    </form>
+                                                </li>
                                             </ul>
                                         </div>
                                     </td>
@@ -98,13 +108,5 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-@endpush
-
-@push('scripts')
-<script>
-    $(document).ready(function() {
-        $('#landlordsTable').DataTable();
-    });
-</script>
 @endpush
 @endsection
