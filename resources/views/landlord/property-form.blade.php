@@ -57,6 +57,24 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="map_link" class="form-label">Map Link (Google Maps or OpenStreetMap)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                <input type="text" class="form-control" id="map_link" name="map_link" 
+                                       value="{{ old('map_link', $property->map_link ?? '') }}" 
+                                       placeholder="Paste Google Maps or OpenStreetMap embed link here">
+                            </div>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> How to get a map link:
+                                <ol class="mt-1 ps-3">
+                                    <li>Go to Google Maps and search for your property location</li>
+                                    <li>Click "Share" and then "Embed a map"</li>
+                                    <li>Copy the HTML code and paste only the URL from the src attribute (starts with https://www.google.com/maps/embed)</li>
+                                </ol>
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" name="description" rows="4" required>{{ old('description', $property->description ?? '') }}</textarea>
                         </div>

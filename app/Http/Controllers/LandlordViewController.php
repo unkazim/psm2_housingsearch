@@ -68,6 +68,7 @@ class LandlordViewController extends Controller
             'bathrooms' => 'required|integer|min:0',
             'preferred_gender' => 'required|in:any,male,female',
             'property_type' => 'required|string|max:255',
+            'map_link' => 'nullable|string',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
         
@@ -86,6 +87,7 @@ class LandlordViewController extends Controller
             'status' => 'available',
             'preferred_gender' => $validated['preferred_gender'],
             'property_type' => $validated['property_type'],
+            'map_link' => $validated['map_link'],
         ]);
         
         // In the storeProperty method
@@ -131,6 +133,7 @@ class LandlordViewController extends Controller
             'preferred_gender' => 'required|in:any,male,female',
             'property_type' => 'required|string|max:255',
             'status' => 'required|in:available,rented,unavailable',
+            'map_link' => 'nullable|url',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
         
@@ -149,6 +152,7 @@ class LandlordViewController extends Controller
             'status' => $validated['status'],
             'preferred_gender' => $validated['preferred_gender'],
             'property_type' => $validated['property_type'],
+            'map_link' => $validated['map_link'],
         ]);
         
         // Handle image uploads

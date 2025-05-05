@@ -25,7 +25,8 @@ class Property extends Model
         'listed_date',
         'status',
         'preferred_gender',
-        'property_type'
+        'property_type',
+        'map_link' // Add this new field
     ];
 
     protected $casts = [

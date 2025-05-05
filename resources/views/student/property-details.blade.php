@@ -151,42 +151,58 @@
                 </div>
             @endif
             
-            <!-- Property Description -->
-            <div class="property-details mb-4">
-                <h3>Description</h3>
-                <p>{{ $property->description }}</p>
-                
-                <div class="property-features">
-                    <div class="property-feature">
-                        <i class="fas fa-bed"></i> {{ $property->bedrooms }} Bedroom(s)
-                    </div>
-                    <div class="property-feature">
-                        <i class="fas fa-bath"></i> {{ $property->bathrooms }} Bathroom(s)
-                    </div>
-                    <div class="property-feature">
-                        <i class="fas fa-building"></i> {{ $property->property_type }}
-                    </div>
-                    <div class="property-feature">
-                        <i class="fas fa-venus-mars"></i> 
-                        @if($property->preferred_gender == 'any')
-                            Any Gender
-                        @elseif($property->preferred_gender == 'male')
-                            Male Only
-                        @elseif($property->preferred_gender == 'female')
-                            Female Only
-                        @endif
-                    </div>
-                    <div class="property-feature">
-                        <i class="fas fa-map-marked-alt"></i> {{ $property->distance_from_uthm }} km from UTHM
-                    </div>
+            <!-- Property Map -->
+            @if($property->map_link)
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i> Property Location</h5>
                 </div>
-                
-                <h3 class="mt-4">Location</h3>
-                <div class="ratio ratio-16x9">
-                    <iframe 
-                        src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q={{ urlencode($property->address) }}" 
-                        allowfullscreen>
-                    </iframe>
+                <div class="card-body p-3 text-center">
+                    <p class="mb-3">View this property's exact location on Google Maps</p>
+                    <a href="{{ $property->map_link }}" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-map-marker-alt me-2"></i> Open in Google Maps
+                    </a>
+                </div>
+            </div>
+            @endif
+            
+            <!-- Property Description -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> Description</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ $property->description }}</p>
+                    
+                    <div class="property-features">
+                        <div class="property-feature">
+                            <i class="fas fa-bed"></i> {{ $property->bedrooms }} Bedroom(s)
+                        </div>
+                        <div class="property-feature">
+                            <i class="fas fa-bath"></i> {{ $property->bathrooms }} Bathroom(s)
+                        </div>
+                        <div class="property-feature">
+                            <i class="fas fa-building"></i> {{ $property->property_type }}
+                        </div>
+                        <div class="property-feature">
+                            <i class="fas fa-venus-mars"></i> 
+                            @if($property->preferred_gender == 'any')
+                                Any Gender
+                            @elseif($property->preferred_gender == 'male')
+                                Male Only
+                            @elseif($property->preferred_gender == 'female')
+                                Female Only
+                            @endif
+                        </div>
+                        <div class="property-feature">
+                            <i class="fas fa-map-marked-alt"></i> {{ $property->distance_from_uthm }} km from UTHM
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h6 class="mb-2"><i class="fas fa-map-marker-alt text-primary me-2"></i>Address:</h6>
+                        <p class="mb-3">{{ $property->address }}</p>
+                    </div>
                 </div>
             </div>
             
@@ -468,6 +484,11 @@
         } else if (event.key === 'ArrowRight') {
             navigateImage(1);
         }
+    });
+    
+    // Add this if you need to handle map interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Map is loaded via iframe, no additional JavaScript needed for basic functionality
     });
 </script>
 @endpush
