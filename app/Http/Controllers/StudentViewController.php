@@ -178,45 +178,42 @@ class StudentViewController extends Controller
     public function updateProfile(Request $request)
     {
         $user = auth()->user();
-        $updateType = $request->input('update_type', 'profile');
         
-        if ($updateType === 'password') {
-            // Password update
-            $validated = $request->validate([
-                'current_password' => 'required',
-                'new_password' => 'required|min:8|confirmed',
-            ]);
-            
-            // Verify current password
-            if (!Hash::check($request->current_password, $user->password)) {
-                return back()->withErrors(['current_password' => 'The current password is incorrect.'])
-                             ->with('active_tab', 'security'); // Add this to keep the security tab active
-            }
-            
-            // Update password
-            $user->password = Hash::make($request->new_password);
-            $user->save();
-            
-            return redirect()->route('student.profile')
-                             ->with('success', 'Password updated successfully!')
-                             ->with('active_tab', 'security'); // Add this to keep the security tab active
-        } else {
-            // Profile information update
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users,email,'.$user->user_id.',user_id',
-                'phone' => 'required|string|max:15',
-            ]);
-            
-            // Update user information
-            $user->name = $validated['name'];
-            $user->email = $validated['email'];
+        // Validate the request
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:15',
+        ]);
+        
+        // Update user information
+        $user->name = $validated['name'];
+        if (isset($validated['phone'])) {
             $user->phone = $validated['phone'];
-            $user->save();
-            
-            return redirect()->route('student.profile')
-                             ->with('success', 'Profile updated successfully!');
         }
+        $user->save();
+        
+        return redirect()->route('student.profile')
+                         ->with('success', 'Profile updated successfully!');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+    
+        $user = Auth::user();
+    
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'The current password is incorrect.']);
+        }
+    
+        $user->password = Hash::make($request->password);
+        $user->save();
+    
+        return redirect()->route('student.profile')
+                       ->with('success', 'Password updated successfully!');
     }
 
     public function applyForRental(Request $request, $propertyId)

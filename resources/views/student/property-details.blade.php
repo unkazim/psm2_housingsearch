@@ -207,93 +207,93 @@
             </div>
             
             <!-- Reviews Section -->
-         <div class="property-details mb-4">
-                    <h3>Reviews</h3>
-                    
-                    @if(Auth::check() && Auth::user()->hasRole('student'))
-                        @if(!$hasReviewed)
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
-                                <i class="fas fa-star me-2"></i> Write a Review
-                            </button>
-                        @else
-                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
-                                <i class="fas fa-edit me-2"></i> Edit Your Review
-                            </button>
-                        @endif
+            <div class="property-details mb-4">
+                <h3>Reviews</h3>
+                
+                @if(Auth::check() && Auth::user()->hasRole('student'))
+                    @if(!$hasReviewed)
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                            <i class="fas fa-star me-2"></i> Write a Review
+                        </button>
+                    @else
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                            <i class="fas fa-edit me-2"></i> Edit Your Review
+                        </button>
                     @endif
-                </div>
-                
-                @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-                
-                @if($property->reviews->count() > 0)
-                    @foreach($property->reviews as $review)
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="card-title">{{ $review->student->user->name }}</h5>
-                                    <div>
-                                        @for($i = 1; $i <= 5; $i++)
-                                            <i class="fas fa-star {{ $i <= $review->rating ? 'text-warning' : 'text-muted' }}"></i>
-                                        @endfor
-                                    </div>
-                                </div>
-                                <h6 class="card-subtitle mb-2 text-muted">{{ $review->review_date->format('M d, Y') }}</h6>
-                                <p class="card-text">{{ $review->comment }}</p>
-                            </div>
-                        </div>
-                    @endforeach
-                @else
-                    <p class="text-muted">No reviews yet for this property.</p>
                 @endif
             </div>
             
-            <!-- Review Modal -->
-            @if(Auth::check() && Auth::user()->hasRole('student'))
-            <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <form action="{{ route('student.submit.review', $property->property_id) }}" method="POST">
-                            @csrf
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label class="form-label">Rating</label>
-                                    <div class="rating-stars mb-3">
-                                        <div class="d-flex">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                <div class="star-rating me-2">
-                                                    <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}" required>
-                                                    <label for="star{{ $i }}" class="star-label">
-                                                        <i class="far fa-star"></i>
-                                                    </label>
-                                                </div>
-                                            @endfor
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="comment" class="form-label">Your Review</label>
-                                        <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
-                                        <div class="form-text">Share your experience with this property.</div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-primary">Submit Review</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
+            
+            @if($property->reviews->count() > 0)
+                @foreach($property->reviews as $review)
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">{{ $review->student->user->name }}</h5>
+                                <div>
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fas fa-star {{ $i <= $review->rating ? 'text-warning' : 'text-muted' }}"></i>
+                                    @endfor
+                                </div>
+                            </div>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ $review->review_date->format('M d, Y') }}</h6>
+                            <p class="card-text">{{ $review->comment }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <p class="text-muted">No reviews yet for this property.</p>
+            @endif
         </div>
+        
+        <!-- Review Modal -->
+        @if(Auth::check() && Auth::user()->hasRole('student'))
+        <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ route('student.submit.review', $property->property_id) }}" method="POST">
+                        @csrf
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Rating</label>
+                                <div class="rating-stars mb-3">
+                                    <div class="d-flex">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <div class="star-rating me-2">
+                                                <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}" required>
+                                                <label for="star{{ $i }}" class="star-label">
+                                                    <i class="far fa-star"></i>
+                                                </label>
+                                            </div>
+                                        @endfor
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="comment" class="form-label">Your Review</label>
+                                    <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
+                                    <div class="form-text">Share your experience with this property.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Submit Review</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @endif
         
         <div class="col-lg-4">
             <!-- Contact Landlord -->
@@ -361,8 +361,6 @@
                         @endif
                     </div>
                 </div>
-            
-                <!-- <a href="#" class="btn btn-primary w-100">Apply for Rental</a> -->
             </div>
             
             <!-- Property Status -->
@@ -459,11 +457,11 @@
             newIndex = 0;
         }
         
-        // Update the main image
+        // Update the image
         document.getElementById('mainImage').src = images[newIndex].src;
         currentImageIndex = newIndex;
         
-        // Update the active thumbnail
+        // Update active thumbnail
         document.querySelectorAll('.property-thumbnail').forEach(thumb => {
             thumb.classList.remove('active');
         });
@@ -471,25 +469,112 @@
         const activeThumbnail = document.querySelector(`.property-thumbnail[data-index="${newIndex}"]`);
         if (activeThumbnail) {
             activeThumbnail.classList.add('active');
-            
-            // Scroll the thumbnail into view if needed
-            activeThumbnail.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
     }
     
-    // Add keyboard navigation
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'ArrowLeft') {
-            navigateImage(-1);
-        } else if (event.key === 'ArrowRight') {
-            navigateImage(1);
-        }
-    });
-    
-    // Add this if you need to handle map interactions
+    // Star rating functionality
     document.addEventListener('DOMContentLoaded', function() {
-        // Map is loaded via iframe, no additional JavaScript needed for basic functionality
+        const starLabels = document.querySelectorAll('.star-label');
+        
+        starLabels.forEach(label => {
+            label.addEventListener('mouseover', function() {
+                const starId = this.getAttribute('for');
+                const starValue = starId.replace('star', '');
+                
+                // Highlight stars up to the hovered one
+                for (let i = 1; i <= 5; i++) {
+                    const icon = document.querySelector(`label[for="star${i}"] i`);
+                    if (i <= starValue) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas', 'text-warning');
+                    } else {
+                        icon.classList.remove('fas', 'text-warning');
+                        icon.classList.add('far');
+                    }
+                }
+            });
+            
+            label.addEventListener('click', function() {
+                const starId = this.getAttribute('for');
+                const starValue = starId.replace('star', '');
+                
+                // Set the radio button value
+                document.getElementById(starId).checked = true;
+                
+                // Fix the stars appearance
+                for (let i = 1; i <= 5; i++) {
+                    const icon = document.querySelector(`label[for="star${i}"] i`);
+                    if (i <= starValue) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas', 'text-warning');
+                    } else {
+                        icon.classList.remove('fas', 'text-warning');
+                        icon.classList.add('far');
+                    }
+                }
+            });
+        });
+        
+        // Reset stars when mouse leaves the container
+        const ratingContainer = document.querySelector('.rating-stars');
+        if (ratingContainer) {
+            ratingContainer.addEventListener('mouseleave', function() {
+                // Find the checked radio button
+                const checkedStar = document.querySelector('input[name="rating"]:checked');
+                const checkedValue = checkedStar ? checkedStar.value : 0;
+                
+                // Reset stars based on the checked value
+                for (let i = 1; i <= 5; i++) {
+                    const icon = document.querySelector(`label[for="star${i}"] i`);
+                    if (i <= checkedValue) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas', 'text-warning');
+                    } else {
+                        icon.classList.remove('fas', 'text-warning');
+                        icon.classList.add('far');
+                    }
+                }
+            });
+        }
     });
 </script>
 @endpush
 @endsection
+
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-custom">
+    <div class="container">
+        <a class="navbar-brand" href="{{ route('student.dashboard') }}">UTHM Student Housing</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('student.dashboard') }}">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle user-dropdown" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        @if(Auth::user()->profile_image)
+                            <img src="{{ asset('storage/profile_images/'.Auth::user()->profile_image) }}" alt="{{ Auth::user()->name }}" class="profile-img-small">
+                        @else
+                            <i class="fas fa-user-circle me-1"></i>
+                        @endif
+                        {{ Auth::user()->name }}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{{ route('student.profile') }}">Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="dropdown-item">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

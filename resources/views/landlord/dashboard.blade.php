@@ -8,6 +8,26 @@
         <div class="col-md-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="text-primary mb-4">Landlord Dashboard</h1>
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        @if(Auth::user()->profile_image)
+                            <img src="{{ asset('storage/profile_images/'.Auth::user()->profile_image) }}" alt="{{ Auth::user()->name }}" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                        @else
+                            <i class="fas fa-user-circle me-2"></i>
+                        @endif
+                        {{ Auth::user()->name }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="{{ route('landlord.profile') }}"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div class="alert alert-info shadow-sm border-0" style="background: linear-gradient(45deg, #e3f2fd, #bbdefb);">
                 <h5 class="alert-heading text-primary"><i class="fas fa-user-circle me-2"></i>Welcome, {{ Auth::user()->name }}!</h5>

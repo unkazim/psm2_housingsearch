@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class LandlordViewController extends Controller
 {
@@ -267,5 +268,77 @@ class LandlordViewController extends Controller
         ]);
         
         return redirect()->back()->with('success', 'Application ' . ucfirst($request->status));
+    }
+    
+    public function profile()
+    {
+        $user = Auth::user();
+        $landlord = $user->landlord;
+        return view('landlord.profile', compact('user', 'landlord'));
+    }
+    
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+        
+        $user = Auth::user();
+        $user->name = $request->name;
+        $user->phone = $request->phone ?? $user->phone;
+        
+        // Handle profile image upload
+        if ($request->hasFile('profile_image')) {
+            // Delete old image if exists
+            if ($user->profile_image && file_exists(public_path('profile_images/' . $user->profile_image))) {
+                unlink(public_path('profile_images/' . $user->profile_image));
+            }
+            
+            // Generate a unique filename
+            $fileName = 'profile_' . $user->id . '_' . Str::random(10) . '.' . $request->file('profile_image')->extension();
+            
+            // Store the image in public directory
+            $request->file('profile_image')->move(public_path('profile_images'), $fileName);
+            
+            // Update user record
+            $user->profile_image = $fileName;
+        }
+        
+        $user->save();
+        
+        return redirect()->route('landlord.profile')->with('success', 'Profile updated successfully!');
+    }
+    
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|current_password',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+        
+        $user = Auth::user();
+        $user->password = Hash::make($request->password);
+        $user->save();
+        
+        return redirect()->route('landlord.profile')->with([
+            'active_tab' => 'security',
+            'success' => 'Password changed successfully!'
+        ]);
+    }
+    
+    public function deleteProfileImage()
+    {
+        $user = Auth::user();
+        
+        if ($user->profile_image && file_exists(public_path('profile_images/' . $user->profile_image))) {
+            unlink(public_path('profile_images/' . $user->profile_image));
+        }
+        
+        $user->profile_image = null;
+        $user->save();
+        
+        return redirect()->route('landlord.profile')->with('success', 'Profile image removed successfully!');
     }
 }
