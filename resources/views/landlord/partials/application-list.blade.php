@@ -149,3 +149,26 @@
         </table>
     </div>
 @endif
+
+<style>
+    /* Add this CSS to fix the flickering popup issue */
+    .modal {
+        pointer-events: none;
+    }
+    .modal-dialog {
+        pointer-events: all;
+    }
+    
+    /* Prevent transform effects on modal parent elements */
+    .modal-open .card,
+    .modal-open .card:hover {
+        transform: none !important;
+        transition: none !important;
+    }
+    
+    /* Ensure modal content doesn't inherit hover effects */
+    .modal-content {
+        transform: none !important;
+        transition: box-shadow 0.3s ease !important;
+    }
+</style>

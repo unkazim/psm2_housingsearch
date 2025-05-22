@@ -35,6 +35,34 @@
         align-items: center;
         justify-content: center;
         font-size: 60px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .profile-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .profile-img-small {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 8px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .user-dropdown {
+        display: flex;
+        align-items: center;
+        color: white;
+    }
+    
+    .user-dropdown i {
+        font-size: 24px;
+        margin-right: 8px;
     }
     
     .profile-body {
@@ -138,21 +166,20 @@
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="profile-card">
+                    <!-- Update the profile header section -->
                     <div class="profile-header">
-                        @if(Auth::user()->profile_image)
-                            <div class="profile-img">
-                                <img src="{{ asset('profile_images/'.Auth::user()->profile_image) }}" alt="{{ Auth::user()->name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                            </div>
-                        @else
-                            <div class="profile-img text-white">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </div>
-                        @endif
+                        <div class="profile-img">
+                            @if(Auth::user()->profile_image)
+                                <img src="{{ asset('profile_images/'.Auth::user()->profile_image) }}" alt="{{ Auth::user()->name }}">
+                            @else
+                                <span>{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                            @endif
+                        </div>
                         <h4>{{ Auth::user()->name }}</h4>
                         <p class="mb-0">Student</p>
                     </div>
                     <div class="profile-body">
-                        <form action="{{ route('student.profile.update') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('profile.update-image') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
                                 <label for="profile_image" class="form-label">Profile Image</label>

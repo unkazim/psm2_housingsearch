@@ -62,7 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/landlord/profile', [LandlordViewController::class, 'profile'])->name('landlord.profile');
         Route::post('/landlord/profile/update', [LandlordViewController::class, 'updateProfile'])->name('landlord.profile.update');
         Route::post('/landlord/password/update', [LandlordViewController::class, 'updatePassword'])->name('landlord.password.update');
-        Route::post('/student/password/update', [StudentViewController::class, 'updatePassword'])->name('student.password.update');
+        Route::get('/landlord/profile/delete-image', [LandlordViewController::class, 'deleteProfileImage'])->name('landlord.profile.delete-image');
     });
     
     // Admin routes
@@ -90,7 +90,7 @@ Route::middleware('auth')->group(function () {
 
 // Profile image update route (for both student and landlord)
 Route::post('/profile/update-image', [App\Http\Controllers\ProfileController::class, 'updateImage'])->name('profile.update-image');
-
+Route::get('/student/profile/delete-image', [App\Http\Controllers\StudentViewController::class, 'deleteProfileImage'])->name('student.profile.delete-image');
 // Landlord profile routes - Update these lines to use LandlordViewController
 Route::get('/landlord/profile', [App\Http\Controllers\LandlordViewController::class, 'profile'])->name('landlord.profile');
 Route::post('/landlord/profile/update', [App\Http\Controllers\LandlordViewController::class, 'updateProfile'])->name('landlord.profile.update');

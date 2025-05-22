@@ -9,6 +9,7 @@ use App\Models\RentalApplication; // Add this line
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 
 class StudentViewController extends Controller
 {
@@ -183,9 +184,33 @@ class StudentViewController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:15',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
-        // Update user information
+        // Handle profile image upload
+        if ($request->hasFile('profile_image')) {
+            // Create directory if it doesn't exist
+            $profileImagesPath = public_path('profile_images');
+            if (!File::exists($profileImagesPath)) {
+                File::makeDirectory($profileImagesPath, 0755, true);
+            }
+            
+            // Delete old image if exists
+            if ($user->profile_image && File::exists(public_path('profile_images/' . $user->profile_image))) {
+                File::delete(public_path('profile_images/' . $user->profile_image));
+            }
+            
+            // Generate unique filename
+            $imageName = time() . '_' . $request->file('profile_image')->getClientOriginalName();
+            
+            // Move the uploaded file
+            $request->file('profile_image')->move($profileImagesPath, $imageName);
+            
+            // Update user's profile image field
+            $user->profile_image = $imageName;
+        }
+        
+        // Update other user information
         $user->name = $validated['name'];
         if (isset($validated['phone'])) {
             $user->phone = $validated['phone'];
@@ -247,5 +272,27 @@ class StudentViewController extends Controller
         $application->save();
         
         return back()->with('success', 'Your rental application has been submitted successfully!');
+    }
+    
+    public function deleteProfileImage()
+    {
+        $user = Auth::user();
+        
+        // Check if user has a profile image
+        if ($user->profile_image) {
+            // Delete the image file
+            $imagePath = public_path('profile_images/' . $user->profile_image);
+            if (File::exists($imagePath)) {
+                File::delete($imagePath);
+            }
+            
+            // Remove the profile image reference from the user
+            $user->profile_image = null;
+            $user->save();
+            
+            return redirect()->route('student.profile')->with('success', 'Profile image removed successfully!');
+        }
+        
+        return redirect()->route('student.profile')->with('error', 'No profile image to remove.');
     }
 }

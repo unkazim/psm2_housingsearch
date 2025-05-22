@@ -57,61 +57,135 @@
         width: 100%;
         max-width: 800px;
         padding: 0 20px;
+        position: relative;
+        z-index: 1;
     }
 
     .search-box {
-        background: rgba(255, 255, 255, 0.15);
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(8px);
+        background: rgba(255, 255, 255, 0.1);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        position: relative;
+        overflow: hidden;
     }
 
-    .search-title {
-        font-size: 3.2rem;
-        font-weight: 800;
-        margin-bottom: 35px;
-        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
-        letter-spacing: 1px;
+    .search-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+        pointer-events: none;
     }
 
     .form-control-lg {
-        background: rgba(255, 255, 255, 0.1);
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        border-radius: 12px;
-        padding: 15px 20px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 18px 25px;
         font-size: 1.1rem;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         color: white;
+        letter-spacing: 0.5px;
     }
 
     .form-control-lg::placeholder {
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 300;
     }
 
     .form-control-lg:focus {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: rgba(255, 255, 255, 0.3);
-        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
-        color: white;
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .btn-search {
+        background: rgba(26, 35, 126, 0.9);
+        border: none;
+        border-radius: 15px;
+        padding: 18px 35px;
+        font-weight: 600;
+        letter-spacing: 0.8px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        text-transform: uppercase;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-search i {
+        color: rgba(255, 255, 255, 0.7);
+        transition: color 0.3s ease;
+    }
+    
+    .btn-search:hover i {
+        color: rgba(255, 255, 255, 1);
+    }
+    
+    .btn-search:hover {
+        background: rgba(48, 63, 159, 0.95);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(26, 35, 126, 0.3);
+    }
+
+    .btn-search::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+        transform: rotate(45deg);
+        transition: 0.6s;
+        opacity: 0;
+    }
+
+    .btn-search:hover::after {
+        opacity: 1;
+        transform: rotate(45deg) translate(50%, 50%);
     }
 
     .location-tags {
-        margin-top: 25px;
+        margin-top: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
     }
 
     .location-tag {
-        background: rgba(26, 35, 126, 0.8);
+        background: rgba(26, 35, 126, 0.6);
         color: white;
-        padding: 10px 25px;
+        padding: 12px 28px;
         border-radius: 30px;
-        margin: 5px 8px;
         text-decoration: none;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s ease;
-        display: inline-block;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         font-weight: 500;
-        backdrop-filter: blur(4px);
+        backdrop-filter: blur(8px);
+        position: relative;
+        overflow: hidden;
+        min-width: 120px;
+    }
+
+    .location-tag:hover {
+        background: rgba(48, 63, 159, 0.8);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: white;
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 20px rgba(26, 35, 126, 0.25);
     }
 
     .text-dark {
@@ -242,9 +316,9 @@
     <div class="search-container">
         <h1 class="search-title">Find Your Perfect Student Housing</h1>
         <div class="search-box">
-            <form action="{{ route('student.search') }}" method="GET">
+            <form action="{{ route('student.search') }}" method="GET" onsubmit="return validateSearch()">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-lg" name="location" placeholder="Search by location, area, or property name...">
+                    <input type="text" class="form-control form-control-lg" name="location" id="searchInput" placeholder="Search by location, area, or property name...">
                     <button class="btn btn-search btn-lg" type="submit">
                         <i class="fas fa-search"></i> Search
                     </button>
@@ -253,7 +327,9 @@
             <div class="location-tags">
                 <p class="text-dark mb-2">Popular locations:</p>
                 <a href="{{ route('student.search', ['location' => 'Parit Raja']) }}" class="location-tag">Parit Raja</a>
-                <a href="{{ route('student.search', ['location' => 'Batu Pahat']) }}" class="location-tag">Batu Pahat</a>
+                <a href="{{ route('student.search', ['location' => 'Parit Yani']) }}" class="location-tag">Parit Yani</a>
+                <a href="{{ route('student.search', ['location' => 'Taman Maju']) }}" class="location-tag">Taman Maju</a>
+                <a href="{{ route('student.search', ['location' => 'Taman Maju Baru']) }}" class="location-tag">Taman Maju Baru</a>
             </div>
         </div>
     </div>
@@ -322,7 +398,54 @@
     </div>
 </section>
 
+<!-- Featured Properties Section -->
+<section class="property-section">
+    <div class="container">
+        <h2 class="mb-4">Featured Properties</h2>
+        <div class="row">
+            @forelse($featuredProperties as $property)
+                <div class="col-md-4">
+                    <div class="card">
+                        @if($property->images->isNotEmpty())
+                            <img src="{{ asset($property->images->first()->image_url) }}" 
+                                 class="card-img-top" alt="{{ $property->title }}">
+                        @endif
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $property->title }}</h5>
+                            <p class="card-text">{{ Str::limit($property->description, 100) }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-primary fw-bold">RM {{ number_format($property->monthly_rent, 2) }}/month</span>
+                                <a href="{{ route('student.property.details', $property->property_id) }}" 
+                                   class="btn btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No featured properties available at the moment.
+                    </div>
+                </div>
+            @endforelse
+        </div>
+    </div>
+</section>
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+@endpush
+
+@push('scripts')
+<script>
+function validateSearch() {
+    var searchInput = document.getElementById('searchInput').value.trim();
+    if (searchInput === '') {
+        alert('Please enter a location, area, or property name to search');
+        return false;
+    }
+    return true;
+}
+</script>
 @endpush
 @endsection

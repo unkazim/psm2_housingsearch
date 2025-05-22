@@ -452,8 +452,8 @@
                 <div class="col-md-3">
                     <h5>Contact</h5>
                     <ul class="list-unstyled">
-                        <li><i class="fas fa-envelope me-2"></i>info@uthmhousing.com</li>
-                        <li><i class="fas fa-phone me-2"></i>+60 12-345-6789</li>
+                        <li><i class="fas fa-envelope me-2"></i>prp@uthm.edu.my</li>
+                        <li><i class="fas fa-phone me-2"></i>+6 07-4537042</li>
                     </ul>
                 </div>
             </div>

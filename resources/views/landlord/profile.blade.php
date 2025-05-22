@@ -39,7 +39,7 @@
                     <h4>{{ $user->name }}</h4>
                     <p class="text-muted">Landlord</p>
                     
-                    <form action="{{ route('landlord.profile.update') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('profile.update-image') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="profile_image" class="form-label d-block">Profile Image</label>
