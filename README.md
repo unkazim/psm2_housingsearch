@@ -1,3 +1,25 @@
+# UTHM Housing Search & Rental System
+
+A web-based system built with PHP and MySQL for students to search, rent, and manage housing near UTHM.
+
+## Features
+- Student, landlord, and admin roles
+- Login and registration
+- Add/view property
+- Admin dashboard
+
+## Tech Stack
+- PHP, MySQL, HTML/CSS
+
+## How to Run
+1. Import `housing.sql` to your MySQL server.
+2. Update DB credentials in `db.php`.
+3. Run project via localhost (XAMPP/Laragon).
+
+## Author
+Abdul Azim
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
