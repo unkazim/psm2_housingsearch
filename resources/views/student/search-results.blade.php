@@ -119,10 +119,10 @@
                         <label class="form-label">Property Type</label>
                         <select class="form-select" name="property_type">
                             <option value="Any Type" {{ request('property_type') == 'Any Type' ? 'selected' : '' }}>Any Type</option>
-                            <option value="Apartment" {{ request('property_type') == 'Apartment' ? 'selected' : '' }}>Apartment</option>
-                            <option value="House" {{ request('property_type') == 'House' ? 'selected' : '' }}>House</option>
-                            <option value="Room" {{ request('property_type') == 'Room' ? 'selected' : '' }}>Room</option>
-                            <option value="Studio" {{ request('property_type') == 'Studio' ? 'selected' : '' }}>Studio</option>
+                            <option value="whole house" {{ request('property_type') == 'whole house' ? 'selected' : '' }}>Whole House</option>
+                            <option value="room" {{ request('property_type') == 'room' ? 'selected' : '' }}>Room</option>
+                            <option value="apartment" {{ request('property_type') == 'apartment' ? 'selected' : '' }}>Apartment</option>
+                            <option value="condominium" {{ request('property_type') == 'condominium' ? 'selected' : '' }}>Condominium</option>
                         </select>
                     </div>
                     

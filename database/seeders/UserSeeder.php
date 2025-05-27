@@ -27,8 +27,18 @@ class UserSeeder extends Seeder
             'status' => 'active'
         ]);
 
-        // Create 10 Landlords with Properties
-        for ($i = 1; $i <= 10; $i++) {
+        // Locations in Parit Raja
+        $locations = [
+            'Taman Universiti Parit Raja',
+            'Taman Maju',
+            'Taman Parit Raja 2',
+            'Kampung Parit Jelutong',
+            'Kampung Seri Paya',
+            'Kampung Parit Tabur'
+        ];
+
+        // Create 6 Landlords with Properties
+        for ($i = 1; $i <= 6; $i++) {
             $user = User::create([
                 'username' => "landlord{$i}",
                 'name' => "Landlord $i",
@@ -43,24 +53,25 @@ class UserSeeder extends Seeder
                 'user_id' => $user->user_id,
                 'bank_account' => "1234567890{$i}",
                 'ic_number' => "900101{$i}5678",
-                'approval_status' => 'approved' // Add this line to set initial status
+                'approval_status' => 'approved'
             ]);
 
-            // Create 2 properties for each landlord
-            for ($j = 1; $j <= 2; $j++) {
+            // Create 4 houses for each landlord
+            for ($j = 1; $j <= 4; $j++) {
+                $randomLocation = $locations[array_rand($locations)];
                 $property = Property::create([
                     'landlord_id' => $landlord->landlord_id,
-                    'title' => "Property {$j} of Landlord {$i}",
-                    'description' => "A beautiful property for rent",
-                    'address' => "Address {$j}, Parit Raja",
-                    'monthly_rent' => rand(300, 1000),
+                    'title' => "House {$j} of Landlord {$i}",
+                    'description' => "A beautiful house for rent in {$randomLocation}",
+                    'address' => "Address {$j}, {$randomLocation}",
+                    'monthly_rent' => rand(600, 1200),
                     'distance_from_uthm' => rand(1, 10),
-                    'bedrooms' => rand(1, 4),
+                    'bedrooms' => rand(2, 5),
                     'bathrooms' => rand(1, 3),
                     'listed_date' => now(),
                     'status' => 'available',
                     'preferred_gender' => ['any', 'male', 'female'][rand(0, 2)],
-                    'property_type' => ['whole house', 'room'][rand(0, 1)]
+                    'property_type' => 'whole house'
                 ]);
 
                 // Add images for each property
@@ -71,6 +82,60 @@ class UserSeeder extends Seeder
                         'display_order' => $k
                     ]);
                 }
+            }
+            
+            // Create 4 rooms for each landlord
+            for ($j = 1; $j <= 4; $j++) {
+                $randomLocation = $locations[array_rand($locations)];
+                $property = Property::create([
+                    'landlord_id' => $landlord->landlord_id,
+                    'title' => "Room {$j} of Landlord {$i}",
+                    'description' => "A comfortable room for rent in {$randomLocation}",
+                    'address' => "Room {$j}, {$randomLocation}",
+                    'monthly_rent' => rand(300, 600),
+                    'distance_from_uthm' => rand(1, 5),
+                    'bedrooms' => 1,
+                    'bathrooms' => rand(1, 2),
+                    'listed_date' => now(),
+                    'status' => 'available',
+                    'preferred_gender' => ['any', 'male', 'female'][rand(0, 2)],
+                    'property_type' => 'room'
+                ]);
+
+                // Add images for each property
+                for ($k = 1; $k <= 3; $k++) {
+                    PropertyImage::create([
+                        'property_id' => $property->property_id,
+                        'image_url' => "property_{$property->property_id}_image_{$k}.jpg",
+                        'display_order' => $k
+                    ]);
+                }
+            }
+            
+            // Create 1 apartment for each landlord
+            $randomLocation = $locations[array_rand($locations)];
+            $property = Property::create([
+                'landlord_id' => $landlord->landlord_id,
+                'title' => "Apartment of Landlord {$i}",
+                'description' => "A modern apartment for rent in {$randomLocation}",
+                'address' => "Apartment Block A, {$randomLocation}",
+                'monthly_rent' => rand(800, 1500),
+                'distance_from_uthm' => rand(1, 8),
+                'bedrooms' => rand(2, 4),
+                'bathrooms' => rand(1, 2),
+                'listed_date' => now(),
+                'status' => 'available',
+                'preferred_gender' => ['any', 'male', 'female'][rand(0, 2)],
+                'property_type' => 'whole house', // changed from 'apartment' to 'whole house'
+            ]);
+
+            // Add images for each property
+            for ($k = 1; $k <= 3; $k++) {
+                PropertyImage::create([
+                    'property_id' => $property->property_id,
+                    'image_url' => "property_{$property->property_id}_image_{$k}.jpg",
+                    'display_order' => $k
+                ]);
             }
         }
 
@@ -87,7 +152,7 @@ class UserSeeder extends Seeder
             ]);
 
             $student = Student::create([
-                'user_id' => $user->user_id, // Changed from $user->id
+                'user_id' => $user->user_id,
                 'matric_number' => "A{$i}0123456",
                 'faculty' => "Faculty of Engineering {$i}",
                 'course' => "Bachelor of Engineering {$i}",

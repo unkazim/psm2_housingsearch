@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('listed_date');
             $table->enum('status', ['available', 'rented', 'pending']);
             $table->enum('preferred_gender', ['any', 'male', 'female']);
-            $table->enum('property_type', ['whole house', 'room']);
+            $table->enum('property_type', ['whole house', 'room', 'apartment', 'condominium']);
             $table->timestamps();
         });
     }
