@@ -11,7 +11,7 @@
                 <div class="dropdown">
                     <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         @if(Auth::user()->profile_image)
-                            <img src="{{ asset('storage/profile_images/'.Auth::user()->profile_image) }}" alt="{{ Auth::user()->name }}" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                            <img src="{{ asset('profile_images/'.Auth::user()->profile_image) }}" alt="{{ Auth::user()->name }}" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
                         @else
                             <i class="fas fa-user-circle me-2"></i>
                         @endif
@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="alert alert-info shadow-sm border-0" style="background: linear-gradient(45deg, #e3f2fd, #bbdefb);">
-                <h5 class="alert-heading text-primary"><i class="fas fa-user-circle me-2"></i>Welcome, {{ Auth::user()->name }}!</h5>
+                <h5 class="alert-heading text-primary"><i class="fas fa-user-circle me-2"></i>Welcome!</h5>
                 <p class="mb-0">This is your landlord dashboard. You can manage your properties and rental applications here.</p>
             </div>
         </div>

@@ -96,3 +96,7 @@ Route::get('/landlord/profile', [App\Http\Controllers\LandlordViewController::cl
 Route::post('/landlord/profile/update', [App\Http\Controllers\LandlordViewController::class, 'updateProfile'])->name('landlord.profile.update');
 Route::post('/landlord/password/update', [App\Http\Controllers\LandlordViewController::class, 'updatePassword'])->name('landlord.password.update');
 Route::post('/student/password/update', [App\Http\Controllers\StudentViewController::class, 'updatePassword'])->name('student.password.update');
+
+// Add these password reset routes
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
